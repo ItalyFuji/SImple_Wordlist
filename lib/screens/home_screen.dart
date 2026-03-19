@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/app_colors.dart'; // AppColorsを使うためにインポート
 
 // ① はじめに画面
 // アプリを開いたときに最初に表示される画面
@@ -32,32 +33,55 @@ class HomeScreen extends StatelessWidget {
               // SizedBox: 空白スペースを作るWidget（height = 縦の高さ）
               const SizedBox(height: 24),
 
-              // アプリの説明文
-              const Text(
-                'これは私が欲しくて趣味で作ったアプリです。',
-                style: TextStyle(fontSize: 16),
-                textAlign: TextAlign.center, // テキストを中央揃え
+              // アプリの説明文を丸い四角で囲む
+              // Container: 大きさ・色・枠線・余白などを自由に設定できる汎用Widget
+              Container(
+                // padding: Container内側の余白
+                padding: const EdgeInsets.all(16),
+                // decoration: 見た目の装飾（色・枠線・角丸など）を設定する
+                decoration: BoxDecoration(
+                  // border: 枠線の設定
+                  border: Border.all(
+                    color: Colors.grey,  // 枠線の色
+                    width: 1,            // 枠線の太さ
+                  ),
+                  // borderRadius: 角の丸み（数字が大きいほど丸くなる）
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'これは私が欲しくて趣味で作った単語帳アプリです。\n語学学習の一助となれば幸いです。',
+                  style: const TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                  // locale: 日本語を指定することで句読点の位置が正しくなる
+                  locale: const Locale('ja'),
+                ),
               ),
 
               const SizedBox(height: 48),
 
               // 「はじめる」ボタン
-              // SizedBox(width: double.infinity) で横幅いっぱいに広げる
-              SizedBox(
-                width: double.infinity,
+              // Center: 子Widgetを中央に配置する
+              // SizedBoxで幅を固定すると左寄りになるため、Centerで囲んで中央揃えにする
+              Center(
+                child: SizedBox(
+                width:  MediaQuery.of(context).size.width * 0.5,
                 child: ElevatedButton(
                   // onPressed: ボタンが押されたときの処理
                   // TODO: あとで言語選択画面への遷移を追加する
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: AppColors.primary, // メインカラー：藤色
                   ),
                   child: const Text(
                     'はじめる',
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: 18,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
                   ),
                 ),
-              ),
+                ), // SizedBox を閉じる
+              ), // Center を閉じる
 
             ],
           ),

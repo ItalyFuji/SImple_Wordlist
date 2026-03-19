@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 // ここを変えるだけでアプリ全体の色が変わる
 class AppColors {
 
+  // アプリのメインカラー（藤色）
+  static const Color primary = Color(0xFFBAA7CC);
+
   // 品詞ごとのカード背景色
   // 0xFF＋6桁の16進数カラーコード（0xFF = 不透明100%）
   static const Map<String, Color> categoryColors = {
