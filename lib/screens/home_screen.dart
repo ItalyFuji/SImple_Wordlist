@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../utils/app_colors.dart'; // AppColorsを使うためにインポート
+import '../utils/app_colors.dart';
+import 'language_select_screen.dart'; // 言語選択画面へ遷移するためにインポート
 
 // ① はじめに画面
 // アプリを開いたときに最初に表示される画面
@@ -67,8 +68,15 @@ class HomeScreen extends StatelessWidget {
                 width:  MediaQuery.of(context).size.width * 0.5,
                 child: ElevatedButton(
                   // onPressed: ボタンが押されたときの処理
-                  // TODO: あとで言語選択画面への遷移を追加する
-                  onPressed: () {},
+                  // Navigator.push で言語選択画面に移動する
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LanguageSelectScreen(),
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     backgroundColor: AppColors.primary, // メインカラー：藤色

@@ -7,6 +7,15 @@ class AppColors {
   // アプリのメインカラー（藤色）
   static const Color primary = Color(0xFFBAA7CC);
 
+  // 言語ファイル名 → {国旗絵文字, 日本語名} のマップ
+  // キー: CSVファイル名（拡張子なし）
+  static const Map<String, Map<String, String>> languageInfo = {
+    'English':  {'flag': '🇬🇧', 'japanese': '英語'},
+    'Deutsch':  {'flag': '🇩🇪', 'japanese': 'ドイツ語'},
+    'Français': {'flag': '🇫🇷', 'japanese': 'フランス語'},
+    'Italiano': {'flag': '🇮🇹', 'japanese': 'イタリア語'},
+  };
+
   // 品詞ごとのカード背景色
   // 0xFF＋6桁の16進数カラーコード（0xFF = 不透明100%）
   static const Map<String, Color> categoryColors = {
