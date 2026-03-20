@@ -94,10 +94,10 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
         ),
       ),
       child: Text(
-        // languageInfoから国旗と日本語名を取得して組み合わせる
-        // 例: '🇬🇧 English（英語）'
+        // languageInfoから国旗を取得して組み合わせる
+        // 例: '🇬🇧 English'
         // ?? '' は、マップにキーがない場合に空文字を返す
-        '${AppColors.languageInfo[language]?['flag'] ?? ''} $language（${AppColors.languageInfo[language]?['japanese'] ?? ''}）',
+        '${AppColors.languageInfo[language]?['flag'] ?? ''} $language',
         style: const TextStyle(fontSize: 16, color: Colors.black),
         textAlign: TextAlign.center,
       ),
