@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // アプリ全体で使う色の定数をまとめたクラス
 // ここを変えるだけでアプリ全体の色が変わる
 class AppColors {
+
+  // フォントスタイルを作るメソッド
+  // 使い方: AppColors.textStyle(fontSize: 16, color: Colors.black)
+  // main.dartでデフォルト設定済みなので、特別な指定が必要なときだけ使う
+  static TextStyle textStyle({
+    double fontSize = 16,
+    Color color = Colors.black,
+    FontWeight fontWeight = FontWeight.normal,
+  }) {
+    return GoogleFonts.notoSansJp(
+      fontSize: fontSize,
+      color: color,
+      fontWeight: fontWeight,
+    );
+  }
 
   // アプリのメインカラー（藤色）
   static const Color primary = Color(0xFFBAA7CC);
@@ -19,14 +35,14 @@ class AppColors {
   // 品詞ごとのカード背景色
   // 0xFF＋6桁の16進数カラーコード（0xFF = 不透明100%）
   static const Map<String, Color> categoryColors = {
-    '名詞':  Color(0xFFCE93D8), // 紫
-    '動詞':  Color(0xFFA5D6A7), // 緑
-    '形容詞': Color(0xFFFFF176), // 黄色
-    '副詞':  Color(0xFFFFCC80), // オレンジ
+    '名詞':  Color(0xFF7058a3), // 菫色
+    '動詞':  Color(0xFF3eb370), // 緑
+    '形容詞': Color(0xFFFFD900), // 黄色
+    '副詞':  Color(0xFFf8b500), // 山吹色
   };
 
   // 上記以外の品詞が来たときに使うデフォルトの色
-  static const Color defaultCategoryColor = Color(0xFFB0BEC5); // グレー
+  static const Color defaultCategoryColor = Color(0xFFc0c6c9); // 灰青
 
   // 品詞名を渡すと対応する色を返すメソッド
   // ?? は「nullなら右側を使う」という意味
