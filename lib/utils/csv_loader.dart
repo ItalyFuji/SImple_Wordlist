@@ -11,9 +11,16 @@ class CsvLoader {
     // rootBundle.loadString: アプリにバンドルされたファイルをテキストとして読み込む
     final raw = await rootBundle.loadString('assets/data/$language.csv');
 
-    // CsvToListConverter: CSV文字列を List<List<dynamic>> に変換する
-    // eol: '\n' は行末の改行文字を指定（WindowsはCRLF対策）
-    final rows = const CsvToListConverter().convert(raw, eol: '\n');
+    // BOM文字(\uFEFF)と改行コードを正規化する
+    // BOM: Windowsのメモ帳などで保存するとファイル先頭に付くことがある
+    // \r\n → \n に統一してからパースする
+    final normalized = raw
+        .replaceAll('\uFEFF', '')   // BOM除去
+        .replaceAll('\r\n', '\n')   // Windows改行 → Unix改行
+        .replaceAll('\r', '\n');    // 古いMac改行 → Unix改行
+
+    // csv 6.x では eol はコンストラクタで指定する（convert()に渡しても無視される）
+    final rows = const CsvToListConverter(eol: '\n').convert(normalized);
 
     // rows[0] はヘッダー行（language,category,word,meaning,tips）なので
     // skip(1) で飛ばして、残りの各行をWordに変換してリストにする
