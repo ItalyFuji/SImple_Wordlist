@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
-import 'language_select_screen.dart'; // 言語選択画面へ遷移するためにインポート
+import 'language_select_screen.dart';
+import 'word_list_screen.dart';
 
 // ① はじめに画面
 // アプリを開いたときに最初に表示される画面
@@ -65,31 +66,76 @@ class HomeScreen extends StatelessWidget {
               // SizedBoxで幅を固定すると左寄りになるため、Centerで囲んで中央揃えにする
               Center(
                 child: SizedBox(
-                width:  MediaQuery.of(context).size.width * 0.5,
-                child: ElevatedButton(
-                  // onPressed: ボタンが押されたときの処理
-                  // Navigator.push で言語選択画面に移動する
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LanguageSelectScreen(),
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  child: Column(
+                    children: [
+
+                      // 「はじめる」ボタン（クイズ開始）
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LanguageSelectScreen(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          minimumSize: const Size(double.infinity, 0),
+                          backgroundColor: AppColors.primary, // 藤色
+                        ),
+                        child: const Text(
+                          'はじめる',
+                          style: TextStyle(fontSize: 18, color: Colors.black),
+                        ),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: AppColors.primary, // メインカラー：藤色
-                  ),
-                  child: const Text(
-                    'はじめる',
-                    style: TextStyle(fontSize: 18,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                    ),
+
+                      const SizedBox(height: 12),
+
+                      // 「収録単語一覧」ボタン（単語確認用・はじめるより少し短め）
+                      // FractionallySizedBox: 親の幅に対する割合で幅を指定する
+                      // widthFactor: 0.8 → 親(はじめるボタンと同じ幅)の80%
+                      FractionallySizedBox(
+                        widthFactor: 0.8,
+                        child: ElevatedButton(
+                        onPressed: () {
+                          // 言語選択画面を開く。選択後は WordListScreen へ遷移する
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LanguageSelectScreen(
+                                onConfirm: (langs) {
+                                  // 言語選択画面の上に単語一覧画面を重ねる
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => WordListScreen(
+                                        languages: langs,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 13),
+                          minimumSize: const Size(double.infinity, 0),
+                          backgroundColor: Colors.grey.shade400, // 灰色
+                        ),
+                        child: const Text(
+                          '収録単語一覧・単語追加',
+                          style: TextStyle(fontSize: 14, color: Colors.black),
+                        ),
+                      ),
+                      ), // FractionallySizedBox を閉じる
+
+                    ],
                   ),
                 ),
-                ), // SizedBox を閉じる
-              ), // Center を閉じる
+              ),
 
             ],
           ),

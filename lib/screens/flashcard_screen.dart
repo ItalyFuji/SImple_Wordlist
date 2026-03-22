@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/quiz_session.dart';
 import '../models/word.dart';
 import '../utils/app_colors.dart';
+import '../utils/done_manager.dart';
 import 'result_screen.dart';
 
 // ⑤ 単語帳画面
@@ -31,12 +32,22 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
       : _currentWord.meaning;
 
   // YES/NOボタンが押されたときの処理
-  void _onAnswer(bool remembered) {
+  void _onAnswer(bool remembered) async {
     // answer()を呼ぶとindexが進んでhasNextが変わるため、
     // 「今が最後の問題か」を先に確認しておく
     final isLast = !widget.session.hasNext;
 
+    // awaitの後でcurrentWordが変わらないよう先に取得しておく
+    final word = _currentWord;
+
+    // YES/NOの結果をSharedPreferencesに保存
+    // YES(true) → 覚えた(done=true) / NO(false) → 覚えてない(done=false)
+    await DoneManager.setDone(word, remembered);
+
     widget.session.answer(remembered); // 正誤を記録してindexを進める
+
+    // awaitの後は画面が破棄されている可能性があるためチェック
+    if (!mounted) return;
 
     if (isLast) {
       // 最後の問題だった → リザルト画面へ

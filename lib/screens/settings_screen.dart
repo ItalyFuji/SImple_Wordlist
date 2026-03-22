@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
 import '../utils/csv_loader.dart';
+import '../utils/done_manager.dart';
 import '../models/word.dart';
 import '../models/quiz_session.dart';
-import 'flashcard_screen.dart'; // 次の画面（あとで作る）
+import 'flashcard_screen.dart';
 
 // ④ 出題設定画面
 class SettingsScreen extends StatefulWidget {
@@ -25,7 +26,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // 問題数の選択肢（0は「全部」を意味する特別な値として使う）
   static const List<int> _countOptions = [5, 10, 20, 50, 100, 0];
 
-  // 読み込んだ利用可能な単語リスト
+  // 言語+品詞でフィルタしたベースの単語リスト（doneフィルタ前）
+  List<Word> _baseWords = [];
+
+  // 実際に出題に使う単語リスト（doneフィルタ後）
   List<Word> _availableWords = [];
   bool _isLoading = true;
 
@@ -34,6 +38,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   // 隠す側: 'word'=単語を隠す / 'meaning'=意味を隠す
   String _hideTarget = 'meaning'; // デフォルトは意味を隠す
+
+  // 覚えた単語も出題するか（false=覚えた単語を除外、true=全部出題）
+  bool _includeKnown = false;
 
   @override
   void initState() {
@@ -47,13 +54,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final allWords = await CsvLoader.loadMultiple(widget.languages);
 
     // 選択した品詞に含まれる単語だけ残す
-    final filtered = allWords
+    _baseWords = allWords
         .where((w) => widget.categories.contains(w.category))
         .toList();
 
+    // doneフィルタを適用して_availableWordsを更新
+    await _applyFilter();
+  }
+
+  // _includeKnownの設定に応じて_availableWordsを更新する
+  // _includeKnown=false なら覚えた単語（done=true）を除外する
+  Future<void> _applyFilter() async {
+    final words = _includeKnown
+        ? _baseWords // 全部出題
+        : await DoneManager.filterUndone(_baseWords); // 未習得のみ
+
     setState(() {
-      _availableWords = filtered;
+      _availableWords = words;
       _isLoading = false;
+      // フィルタ変更で選択済み問題数が無効になった場合はリセット
+      if (_selectedCount != null &&
+          _selectedCount != 0 &&
+          _selectedCount! > words.length) {
+        _selectedCount = null;
+      }
     });
   }
 
@@ -165,6 +189,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Expanded(child: _buildHideButton('word', '単語')),
                         const SizedBox(width: spacing),
                         Expanded(child: _buildHideButton('meaning', '意味')),
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // --- 覚えた単語の扱い ---
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          '覚えた単語も出題する',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Switch(
+                          value: _includeKnown,
+                          activeColor: AppColors.primary,
+                          onChanged: (value) {
+                            // トグルを切り替えたらフィルタを再適用する
+                            setState(() => _includeKnown = value);
+                            _applyFilter();
+                          },
+                        ),
                       ],
                     ),
 

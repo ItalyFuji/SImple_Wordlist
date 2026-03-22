@@ -43,6 +43,21 @@ class DoneManager {
     }).toList();
   }
 
+  // 複数単語のdone状態を一括取得してMapで返す
+  // SharedPreferencesを1回だけ開くので、単語数が多くても効率的
+  // 使い方: DoneManager.getDoneMap(words) → {'id1': true, 'id2': false, ...}
+  static Future<Map<String, bool>> getDoneMap(List<Word> words) async {
+    final prefs = await SharedPreferences.getInstance();
+    final map = <String, bool>{};
+    for (final word in words) {
+      final key = _prefix + word.id;
+      map[word.id] = prefs.containsKey(key)
+          ? (prefs.getBool(key) ?? word.done)
+          : word.done;
+    }
+    return map;
+  }
+
   // 全単語の習得状態をリセットする（全てNo/未習得に戻す）
   // 管理画面などから使う予定
   static Future<void> resetAll(List<Word> words) async {
