@@ -30,6 +30,7 @@ class UserWordManager {
       japaneseNames,
     );
 
+    // ユーザー追加単語はDBから直接削除されるためhiddenIdsでフィルタ不要
     return rows
         .map((r) => Word(
               language:    r['language'] as String,
@@ -40,7 +41,6 @@ class UserWordManager {
               done:        (r['done'] as int) == 1,
               isUserAdded: true,
             ))
-        .where((w) => !hiddenIds.contains(w.id))
         .toList();
   }
 
