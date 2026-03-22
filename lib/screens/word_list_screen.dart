@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
 import '../utils/csv_loader.dart';
 import '../utils/done_manager.dart';
+import '../utils/word_edit_manager.dart';
 import '../models/word.dart';
+import 'word_detail_screen.dart';
 
 // 収録単語一覧画面
 // 選択した言語の単語を全品詞・A→Z順で表示し、覚えた状態も確認できる
@@ -46,11 +48,14 @@ class _WordListScreenState extends State<WordListScreen> {
     // A→Z順にソート（大文字小文字を無視）
     words.sort((a, b) => a.word.toLowerCase().compareTo(b.word.toLowerCase()));
 
-    // 全単語のdone状態を一括取得（SharedPreferencesを1回だけ開く）
+    // 全単語のdone状態を一括取得（編集前のIDで引く）
     final doneMap = await DoneManager.getDoneMap(words);
 
+    // 保存済みの編集を適用（編集後も元のIDは変わらないのでdoneMapと整合する）
+    final editedWords = await WordEditManager.applyEdits(words);
+
     setState(() {
-      _words = words;
+      _words = editedWords;
       _doneMap = doneMap;
       _isLoading = false;
     });
@@ -78,7 +83,18 @@ class _WordListScreenState extends State<WordListScreen> {
                         final word = _words[index];
                         final isDone = _doneMap[word.id] ?? false;
 
-                        return Container(
+                        return InkWell(
+                      onTap: () async {
+                        final edited = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WordDetailScreen(word: word),
+                          ),
+                        );
+                        // 編集があった場合は一覧を再読み込み
+                        if (edited == true) _loadWords();
+                      },
+                      child: Container(
                     // 背景色: 品詞カラーを薄く（リザルト画面と同じ）
                     color: AppColors.getColor(word.category)
                         .withValues(alpha: 0.15),
@@ -145,7 +161,8 @@ class _WordListScreenState extends State<WordListScreen> {
 
                       ],
                     ),
-                  );
+                  ),   // Container
+                      );  // InkWell
                       },
                     ),
                   ),
