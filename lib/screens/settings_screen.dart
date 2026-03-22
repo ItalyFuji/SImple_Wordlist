@@ -7,12 +7,12 @@ import 'flashcard_screen.dart'; // 次の画面（あとで作る）
 
 // ④ 出題設定画面
 class SettingsScreen extends StatefulWidget {
-  final String language;        // 前の画面から受け取る言語名
+  final List<String> languages;  // 前の画面から受け取る言語リスト（複数対応）
   final List<String> categories; // 前の画面から受け取る品詞リスト
 
   const SettingsScreen({
     super.key,
-    required this.language,
+    required this.languages,
     required this.categories,
   });
 
@@ -43,7 +43,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   // CSVから単語を読み込み、選択した品詞でフィルタリングする
   Future<void> _loadWords() async {
-    final allWords = await CsvLoader.load(widget.language);
+    // 複数言語のCSVをまとめて読み込む
+    final allWords = await CsvLoader.loadMultiple(widget.languages);
 
     // 選択した品詞に含まれる単語だけ残す
     final filtered = allWords
@@ -82,7 +83,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.language),
+        title: Text(widget.languages.join('・')),
         backgroundColor: AppColors.primary,
       ),
       body: SafeArea(
@@ -95,10 +96,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   children: [
 
                     // 選択中の言語・品詞を表示
-                    // 例: 英語 ／ 名詞・動詞
+                    // 例: English・Deutsch ／ 名詞・動詞
                     Center(
                       child: Text(
-                        '${widget.language}  ／  ${widget.categories.join('・')}',
+                        '${widget.languages.join('・')}\n${widget.categories.join('・')}',
+                        textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

@@ -27,6 +27,16 @@ class CsvLoader {
     return rows.skip(1).map((row) => Word.fromCsvRow(row)).toList();
   }
 
+  // 複数言語のCSVをまとめて読み込んでWordのリストを返す
+  // 使い方: CsvLoader.loadMultiple(['English', 'Deutsch']) → [Word, Word, ...]
+  static Future<List<Word>> loadMultiple(List<String> languages) async {
+    final allWords = <Word>[];
+    for (final language in languages) {
+      allWords.addAll(await load(language));
+    }
+    return allWords;
+  }
+
   // assets/data/ にあるCSVファイルを自動検出して言語名リストを返す
   // 使い方: CsvLoader.loadLanguageList() → ['English', 'Deutsch', ...]
   // 新しい言語のCSVをassetsに追加するだけで自動的にリストに増える

@@ -4,8 +4,6 @@ import '../utils/csv_loader.dart';
 import 'category_select_screen.dart';
 
 // ② 言語選択画面
-// StatefulWidget: 画面の「状態」が変わるWidgetに使う
-// この画面ではCSV読み込みの完了・未完了という状態が変わるためStatefulWidgetを使う
 class LanguageSelectScreen extends StatefulWidget {
   const LanguageSelectScreen({super.key});
 
@@ -15,32 +13,39 @@ class LanguageSelectScreen extends StatefulWidget {
 
 class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
 
-  // 言語名のリスト（CSV読み込み後に入る）
   List<String> _languages = [];
-
-  // 読み込み中かどうかのフラグ
   bool _isLoading = true;
 
-  // initState: 画面が初めて表示されるときに1度だけ呼ばれる処理
+  // 選択中の言語を管理するSet（複数選択対応）
+  final Set<String> _selected = {};
+
   @override
   void initState() {
     super.initState();
     _loadLanguages();
   }
 
-  // CSVファイルから言語リストを読み込むメソッド
   Future<void> _loadLanguages() async {
     final languages = await CsvLoader.loadLanguageList();
-    // setState: 状態が変わったことをFlutterに知らせて画面を再描画する
     setState(() {
       _languages = languages;
       _isLoading = false;
     });
   }
 
+  // 言語ボタンをタップしたときの処理（選択 ↔ 解除のトグル）
+  void _toggleLanguage(String language) {
+    setState(() {
+      if (_selected.contains(language)) {
+        _selected.remove(language);
+      } else {
+        _selected.add(language);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // ボタンの高さを固定するためにaspectRatioを動的に計算する
     const double buttonHeight = 60;
     const double spacing = 12;
     const double padding = 24;
@@ -57,17 +62,54 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
         child: Padding(
           padding: const EdgeInsets.all(padding),
           child: _isLoading
-              // 読み込み中はくるくるを表示
               ? const Center(child: CircularProgressIndicator())
-              // GridView.count: 列数を固定したグリッドレイアウト
-              : GridView.count(
-                  crossAxisCount: 2,         // 2列
-                  crossAxisSpacing: spacing, // 列間の余白
-                  mainAxisSpacing: spacing,  // 行間の余白
-                  childAspectRatio: aspectRatio,
-                  children: _languages
-                      .map((language) => _buildLanguageButton(language))
-                      .toList(),
+              : Column(
+                  children: [
+
+                    // 言語選択グリッド
+                    GridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: spacing,
+                      mainAxisSpacing: spacing,
+                      childAspectRatio: aspectRatio,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: _languages
+                          .map((language) => _buildLanguageButton(language))
+                          .toList(),
+                    ),
+
+                    const Spacer(),
+
+                    // 「次へ」ボタン（未選択なら無効）
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _selected.isEmpty
+                            ? null
+                            : () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CategorySelectScreen(
+                                      // Set → List に変換して渡す
+                                      languages: _selected.toList(),
+                                    ),
+                                  ),
+                                );
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        child: const Text(
+                          '次へ',
+                          style: TextStyle(fontSize: 18, color: Colors.black),
+                        ),
+                      ),
+                    ),
+
+                  ],
                 ),
         ),
       ),
@@ -76,27 +118,21 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
 
   // 言語ボタンを作るメソッド
   Widget _buildLanguageButton(String language) {
+    final isSelected = _selected.contains(language);
+
     return ElevatedButton(
-      onPressed: () {
-        // Navigator.push: 新しい画面に移動する
-        // 選んだ言語名（language）を次の画面に渡す
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CategorySelectScreen(language: language),
-          ),
-        );
-      },
+      onPressed: () => _toggleLanguage(language),
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
+          // 選択中は赤枠
+          side: isSelected
+              ? const BorderSide(color: Colors.red, width: 3)
+              : BorderSide.none,
         ),
       ),
       child: Text(
-        // languageInfoから国旗を取得して組み合わせる
-        // 例: '🇬🇧 English'
-        // ?? '' は、マップにキーがない場合に空文字を返す
         '${AppColors.languageInfo[language]?['flag'] ?? ''} $language',
         style: const TextStyle(fontSize: 16, color: Colors.black),
         textAlign: TextAlign.center,

@@ -4,9 +4,9 @@ import 'settings_screen.dart'; // 次の画面（あとで作る）
 
 // ③ 品詞選択画面
 class CategorySelectScreen extends StatefulWidget {
-  final String language; // 前の画面から受け取る言語名
+  final List<String> languages; // 前の画面から受け取る言語リスト（複数対応）
 
-  const CategorySelectScreen({super.key, required this.language});
+  const CategorySelectScreen({super.key, required this.languages});
 
   @override
   State<CategorySelectScreen> createState() => _CategorySelectScreenState();
@@ -75,7 +75,8 @@ class _CategorySelectScreenState extends State<CategorySelectScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.language), // 前の画面から受け取った言語名を表示
+        // 選択した言語を「・」でつないで表示（例: English・Deutsch）
+        title: Text(widget.languages.join('・')),
         backgroundColor: AppColors.primary,
       ),
       body: SafeArea(
@@ -113,8 +114,7 @@ class _CategorySelectScreenState extends State<CategorySelectScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => SettingsScreen(
-                                language: widget.language,
-                                // Set → List に変換して渡す
+                                languages: widget.languages,
                                 categories: _selected.toList(),
                               ),
                             ),
