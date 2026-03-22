@@ -32,10 +32,14 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
 
   // YES/NOボタンが押されたときの処理
   void _onAnswer(bool remembered) {
-    widget.session.answer(remembered);
+    // answer()を呼ぶとindexが進んでhasNextが変わるため、
+    // 「今が最後の問題か」を先に確認しておく
+    final isLast = !widget.session.hasNext;
 
-    if (!widget.session.hasNext) {
-      // 最後の問題 → リザルト画面へ
+    widget.session.answer(remembered); // 正誤を記録してindexを進める
+
+    if (isLast) {
+      // 最後の問題だった → リザルト画面へ
       // pushReplacement: 現在の画面をリザルト画面に置き換える（戻れなくする）
       Navigator.pushReplacement(
         context,
@@ -44,7 +48,7 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
         ),
       );
     } else {
-      // 次の問題へ（revealedをリセット）
+      // まだ問題が残っている → 次の問題へ（revealedをリセット）
       setState(() => _isRevealed = false);
     }
   }
@@ -113,7 +117,7 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
                         Text(
                           _visibleText,
                           style: const TextStyle(
-                            fontSize: 70, // ★表示側（単語 or 意味）の文字サイズ
+                            fontSize: 60, // ★表示側（単語 or 意味）の文字サイズ
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.center,
@@ -121,9 +125,11 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
 
                         const SizedBox(height: 8), // ★単語と品詞ラベルの間の余白
 
-                        // 品詞ラベル（単語の下・横線の上）
+                        // 言語／品詞ラベル（単語の下・横線の上）
+                        // word.language と word.category を組み合わせて表示
+                        // 例: "English　／　名詞"
                         Text(
-                          word.category,
+                          '${word.language}/${word.category}',
                           style: const TextStyle(
                             fontSize: 30, // ★品詞ラベルの文字サイズ
                             color: Colors.black54,
@@ -138,25 +144,31 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
                         const SizedBox(height: 16), // ★横線と隠し側の間の余白
 
                         // 隠し側: タップで公開
-                        // GestureDetector: タップジェスチャーを検知するWidget
-                        GestureDetector(
-                          onTap: _isRevealed
-                              ? null
-                              : () => setState(() => _isRevealed = true),
-                          child: _isRevealed
-                              ? Text(
-                                  _hiddenText,
-                                  style: const TextStyle(
-                                    fontSize: 60, // ★隠し側（公開後）の文字サイズ
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                )
-                              : const Icon(
-                                  Icons.block,
-                                  size: 48, // ★🚫アイコンのサイズ
-                                  color: Colors.black38,
-                                ),
+                        // SizedBox(height)で高さを固定することで、
+                        // 公開前後でカードサイズが変わらないようにする
+                        SizedBox(
+                          height: 80, // ★隠し側エリアの固定高さ（公開前後で変わらない）
+                          child: GestureDetector(
+                            onTap: _isRevealed
+                                ? null
+                                : () => setState(() => _isRevealed = true),
+                            child: Center(
+                              child: _isRevealed
+                                  ? Text(
+                                      _hiddenText,
+                                      style: const TextStyle(
+                                        fontSize: 50, // ★隠し側（公開後）の文字サイズ
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  : const Icon(
+                                      Icons.block,
+                                      size: 48, // ★🚫アイコンのサイズ
+                                      color: Colors.black38,
+                                    ),
+                            ),
+                          ),
                         ),
 
                         // 注釈（tipsが空でない場合のみ表示）
