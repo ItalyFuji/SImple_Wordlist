@@ -170,41 +170,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                     const Spacer(),
 
-                    // 「次へ」ボタン（問題数未選択なら無効）
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _selectedCount == null
-                            ? null
-                            : () {
-                                // QuizSessionを作って単語帳画面へ渡す
-                                // 単語リストをシャッフルして先頭から_actualCount件取り出す
-                                final shuffled = List<Word>.from(_availableWords)
-                                  ..shuffle();
-                                final quizWords =
-                                    shuffled.take(_actualCount).toList();
+                    // 「戻る」「次へ」ボタン（横並び）
+                    Row(
+                      children: [
+                        // 戻るボタン（左半分）
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: const Text(
+                              '戻る',
+                              style: TextStyle(fontSize: 18, color: Colors.black),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // 次へボタン（右半分・問題数未選択なら無効）
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: _selectedCount == null
+                                ? null
+                                : () {
+                                    // QuizSessionを作って単語帳画面へ渡す
+                                    // 単語リストをシャッフルして先頭から_actualCount件取り出す
+                                    final shuffled = List<Word>.from(_availableWords)
+                                      ..shuffle();
+                                    final quizWords =
+                                        shuffled.take(_actualCount).toList();
 
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FlashcardScreen(
-                                      session: QuizSession(
-                                        words: quizWords,
-                                        hideTarget: _hideTarget,
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => FlashcardScreen(
+                                          session: QuizSession(
+                                            words: quizWords,
+                                            hideTarget: _hideTarget,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                );
-                              },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                                    );
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: const Text(
+                              '次へ',
+                              style: TextStyle(fontSize: 18, color: Colors.black),
+                            ),
+                          ),
                         ),
-                        child: const Text(
-                          '次へ',
-                          style: TextStyle(fontSize: 18, color: Colors.black),
-                        ),
-                      ),
+                      ],
                     ),
 
                   ],

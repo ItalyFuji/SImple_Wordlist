@@ -81,32 +81,50 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
 
                     const Spacer(),
 
-                    // 「次へ」ボタン（未選択なら無効）
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _selected.isEmpty
-                            ? null
-                            : () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CategorySelectScreen(
-                                      // Set → List に変換して渡す
-                                      languages: _selected.toList(),
-                                    ),
-                                  ),
-                                );
-                              },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                    // 「戻る」「次へ」ボタン（横並び）
+                    Row(
+                      children: [
+                        // 戻るボタン（左半分）
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: const Text(
+                              '戻る',
+                              style: TextStyle(fontSize: 18, color: Colors.black),
+                            ),
+                          ),
                         ),
-                        child: const Text(
-                          '次へ',
-                          style: TextStyle(fontSize: 18, color: Colors.black),
+                        const SizedBox(width: 12),
+                        // 次へボタン（右半分・未選択なら無効）
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: _selected.isEmpty
+                                ? null
+                                : () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CategorySelectScreen(
+                                          languages: _selected.toList(),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: const Text(
+                              '次へ',
+                              style: TextStyle(fontSize: 18, color: Colors.black),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
 
                   ],

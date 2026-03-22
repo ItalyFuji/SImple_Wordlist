@@ -100,35 +100,53 @@ class _CategorySelectScreenState extends State<CategorySelectScreen> {
                 ],
               ),
 
-              const Spacer(), // 残りのスペースを埋めて次へボタンを下に押し込む
+              const Spacer(), // 残りのスペースを埋めてボタンを下に押し込む
 
-              // 「次へ」ボタン
-              // _selected が空のときは無効化（onPressed を null にする）
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _selected.isEmpty
-                      ? null // null にするとボタンが無効化される
-                      : () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SettingsScreen(
-                                languages: widget.languages,
-                                categories: _selected.toList(),
-                              ),
-                            ),
-                          );
-                        },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+              // 「戻る」「次へ」ボタン（横並び）
+              Row(
+                children: [
+                  // 戻るボタン（左半分）
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text(
+                        '戻る',
+                        style: TextStyle(fontSize: 18, color: Colors.black),
+                      ),
+                    ),
                   ),
-                  child: const Text(
-                    '次へ',
-                    style: TextStyle(fontSize: 18, color: Colors.black),
+                  const SizedBox(width: 12),
+                  // 次へボタン（右半分・未選択なら無効）
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _selected.isEmpty
+                          ? null // null にするとボタンが無効化される
+                          : () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SettingsScreen(
+                                    languages: widget.languages,
+                                    categories: _selected.toList(),
+                                  ),
+                                ),
+                              );
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text(
+                        '次へ',
+                        style: TextStyle(fontSize: 18, color: Colors.black),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
 
             ],
