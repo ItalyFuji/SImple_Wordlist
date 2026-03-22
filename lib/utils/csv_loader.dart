@@ -1,4 +1,3 @@
-import 'dart:convert'; // JSONの変換に使う（言語リスト取得で使用）
 import 'package:flutter/services.dart'; // rootBundle（アプリ内ファイルの読み込み）に使う
 import 'package:csv/csv.dart'; // CSVをDartのリストに変換するパッケージ
 import '../models/word.dart';  // Wordクラスを使うためにインポート
@@ -41,15 +40,14 @@ class CsvLoader {
   // 使い方: CsvLoader.loadLanguageList() → ['English', 'Deutsch', ...]
   // 新しい言語のCSVをassetsに追加するだけで自動的にリストに増える
   static Future<List<String>> loadLanguageList() async {
-    // AssetManifest.json: アプリに含まれる全ファイルのパス一覧（Flutter自動生成）
-    final manifestJson = await rootBundle.loadString('AssetManifest.json');
-
-    // JSONをMapに変換する
-    final manifest = json.decode(manifestJson) as Map<String, dynamic>;
+    // AssetManifest: アプリに含まれる全ファイルのパス一覧を取得するFlutter公式API
+    // 旧: AssetManifest.json を直接読む方法は Flutter 3.22 以降で廃止
+    // 新: AssetManifest.loadFromAssetBundle() を使う
+    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
 
     // 全パスの中から assets/data/ 以下の .csv ファイルだけを取り出す
     // 例: 'assets/data/English.csv' → 'English'
-    return manifest.keys
+    return manifest.listAssets()
         .where((path) => path.startsWith('assets/data/') && path.endsWith('.csv'))
         .map((path) => path.split('/').last.replaceAll('.csv', ''))
         .toList();

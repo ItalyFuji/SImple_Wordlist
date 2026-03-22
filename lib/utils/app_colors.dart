@@ -39,6 +39,7 @@ class AppColors {
     '動詞':  Color(0xFF3eb370), // 緑
     '形容詞': Color(0xFFFFD900), // 黄色
     '副詞':  Color(0xFFf8b500), // 山吹色
+    '間投詞': Color(0xFF2ca9e1), // 水色
   };
 
   // 上記以外の品詞が来たときに使うデフォルトの色

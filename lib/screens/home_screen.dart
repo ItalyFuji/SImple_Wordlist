@@ -126,7 +126,7 @@ class HomeScreen extends StatelessWidget {
                           backgroundColor: Colors.grey.shade400, // 灰色
                         ),
                         child: const Text(
-                          '収録単語一覧・単語追加',
+                          '単語一覧・追加',
                           style: TextStyle(fontSize: 14, color: Colors.black),
                         ),
                       ),

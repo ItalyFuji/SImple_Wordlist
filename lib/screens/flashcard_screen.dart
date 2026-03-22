@@ -31,6 +31,12 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
       ? _currentWord.word
       : _currentWord.meaning;
 
+  // 表示側のフォントサイズ（単語=60、意味=40 で固定）
+  double get _visibleFontSize => widget.session.hideTarget == 'word' ? 30 : 50;
+
+  // 隠す側のフォントサイズ（単語=60、意味=40 で固定）
+  double get _hiddenFontSize => widget.session.hideTarget == 'word' ? 50 : 30;
+
   // YES/NOボタンが押されたときの処理
   void _onAnswer(bool remembered) async {
     // answer()を呼ぶとindexが進んでhasNextが変わるため、
@@ -127,8 +133,8 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
                         // 表示側テキスト（単語 or 意味）
                         Text(
                           _visibleText,
-                          style: const TextStyle(
-                            fontSize: 60, // ★表示側（単語 or 意味）の文字サイズ
+                          style: TextStyle(
+                            fontSize: _visibleFontSize, // 単語=60 / 意味=40 で固定
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.center,
@@ -167,8 +173,8 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
                               child: _isRevealed
                                   ? Text(
                                       _hiddenText,
-                                      style: const TextStyle(
-                                        fontSize: 50, // ★隠し側（公開後）の文字サイズ
+                                      style: TextStyle(
+                                        fontSize: _hiddenFontSize, // 単語=60 / 意味=40 で固定
                                         fontWeight: FontWeight.bold,
                                       ),
                                       textAlign: TextAlign.center,

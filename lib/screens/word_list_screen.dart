@@ -98,18 +98,18 @@ class _WordListScreenState extends State<WordListScreen> {
                             // _getFlagで国旗を逆引きしてから日本語名と組み合わせる
                             '${_getFlag(word.language)} ${word.language}',
                             style: const TextStyle(
-                              fontSize: 13, // ★言語の文字サイズ
+                              fontSize: 10, // ★言語の文字サイズ
                               color: Colors.black87,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
 
-                        const SizedBox(width: 8), // ★言語列と単語列の間隔
+                        const SizedBox(width: 5), // ★言語列と単語列の間隔
 
                         // ── 単語／品詞列 ─────────────────────────
                         SizedBox(
-                          width: 110, // ★単語+品詞列の幅
+                          width: 200, // ★単語+品詞列の幅
                           child: Text(
                             '${word.word}/${word.category}',
                             style: const TextStyle(
@@ -127,22 +127,6 @@ class _WordListScreenState extends State<WordListScreen> {
                             style: const TextStyle(fontSize: 15), // ★意味の文字サイズ
                             overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-
-                        // ── Tips列（内容がある時だけ表示）────────────
-                        // Tipsが空でも幅を確保することで他の行と列がずれない
-                        SizedBox(
-                          width: 72, // ★Tips列の幅（不要なら0にするとTips列が消える）
-                          child: word.tips.isNotEmpty
-                              ? Text(
-                                  word.tips,
-                                  style: const TextStyle(
-                                    fontSize: 13, // ★Tipsの文字サイズ
-                                    color: Colors.black45,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                )
-                              : const SizedBox.shrink(),
                         ),
 
                         // ── 覚えた？列 ───────────────────────────

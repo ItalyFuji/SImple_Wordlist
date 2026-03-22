@@ -15,10 +15,10 @@ class CategorySelectScreen extends StatefulWidget {
 class _CategorySelectScreenState extends State<CategorySelectScreen> {
 
   // 表示するボタンの固定リスト（順番もここで管理）
-  static const List<String> _buttons = ['名詞', '動詞', '形容詞', '副詞', '全部'];
+  static const List<String> _buttons = ['名詞', '動詞', '形容詞', '副詞', '間投詞', '全部'];
 
   // 実際の品詞リスト（「全部」は含まない）
-  static const List<String> _realCategories = ['名詞', '動詞', '形容詞', '副詞'];
+  static const List<String> _realCategories = ['名詞', '動詞', '形容詞', '副詞', '間投詞'];
 
   // 選択中の品詞を管理するSet（重複なしのリスト）
   // 例: {'名詞', '動詞'}
@@ -95,8 +95,7 @@ class _CategorySelectScreenState extends State<CategorySelectScreen> {
                 physics: const NeverScrollableScrollPhysics(), // スクロール無効
                 children: [
                   ..._buttons.map((category) => _buildCategoryButton(category)),
-                  // 5ボタンで2列 → 6マス目が空くので空のWidgetを置く
-                  const SizedBox(),
+                  // 6ボタンで2列 → ちょうど3行でぴったり埋まる
                 ],
               ),
 
