@@ -28,8 +28,11 @@ class AppColors {
   static const Map<String, Map<String, String>> languageInfo = {
     'English':  {'flag': '🇬🇧', 'japanese': '英語'},
     'Deutsch':  {'flag': '🇩🇪', 'japanese': 'ドイツ語'},
+    'Español':  {'flag': '🇪🇸', 'japanese': 'スペイン語'},
     'Français': {'flag': '🇫🇷', 'japanese': 'フランス語'},
     'Italiano': {'flag': '🇮🇹', 'japanese': 'イタリア語'},
+    '中文':     {'flag': '🇨🇳', 'japanese': '中国語'},
+    '한국어':   {'flag': '🇰🇷', 'japanese': '韓国語'},
   };
 
   // 品詞ごとのカード背景色

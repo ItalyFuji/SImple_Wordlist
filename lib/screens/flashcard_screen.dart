@@ -132,13 +132,17 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
                       children: [
 
                         // 表示側テキスト（単語 or 意味）
-                        Text(
-                          _visibleText,
-                          style: TextStyle(
-                            fontSize: _visibleFontSize, // 単語=60 / 意味=40 で固定
-                            fontWeight: FontWeight.bold,
+                        // FittedBox: テキストが幅に収まらない場合に自動で縮小する
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            _visibleText,
+                            style: TextStyle(
+                              fontSize: _visibleFontSize,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
                         ),
 
                         const SizedBox(height: 8), // ★単語と品詞ラベルの間の余白
@@ -172,18 +176,34 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
                                 : () => setState(() => _isRevealed = true),
                             child: Center(
                               child: _isRevealed
-                                  ? Text(
-                                      _hiddenText,
-                                      style: TextStyle(
-                                        fontSize: _hiddenFontSize, // 単語=60 / 意味=40 で固定
-                                        fontWeight: FontWeight.bold,
+                                  ? FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        _hiddenText,
+                                        style: TextStyle(
+                                          fontSize: _hiddenFontSize,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
                                       ),
-                                      textAlign: TextAlign.center,
                                     )
-                                  : const Icon(
-                                      Icons.block,
-                                      size: 48, // ★🚫アイコンのサイズ
-                                      color: Colors.black38,
+                                  : Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.red, width: 2),
+                                        borderRadius:
+                                            BorderRadius.circular(8),
+                                      ),
+                                      child: const Text(
+                                        '答えを表示',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ),
                             ),
                           ),

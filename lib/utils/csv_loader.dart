@@ -47,9 +47,20 @@ class CsvLoader {
 
     // 全パスの中から assets/data/ 以下の .csv ファイルだけを取り出す
     // 例: 'assets/data/English.csv' → 'English'
-    return manifest.listAssets()
+    final languages = manifest.listAssets()
         .where((path) => path.startsWith('assets/data/') && path.endsWith('.csv'))
         .map((path) => path.split('/').last.replaceAll('.csv', ''))
         .toList();
+
+    // ラテン文字始まり（A-Z）を先に、それ以外（中文・한국어など）を後ろに並べる
+    languages.sort((a, b) {
+      final aIsLatin = RegExp(r'^[A-Za-z]').hasMatch(a);
+      final bIsLatin = RegExp(r'^[A-Za-z]').hasMatch(b);
+      if (aIsLatin && !bIsLatin) return -1;
+      if (!aIsLatin && bIsLatin) return 1;
+      return a.compareTo(b);
+    });
+
+    return languages;
   }
 }
