@@ -21,7 +21,7 @@ class ResultScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: const Text('リザルト'),
+        title: const Text('リザルト画面'),
         // 戻るボタンを非表示にする（リザルト画面からは専用ボタンで戻る）
         automaticallyImplyLeading: false,
       ),

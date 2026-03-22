@@ -15,11 +15,10 @@ class AppDatabase {
     final path = join(await getDatabasesPath(), 'simple_wordlist.db');
     return openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
 
         // CSV単語の編集内容を保存するテーブル
-        // id: CSV単語の元ID（language_category_word）
         await db.execute('''
           CREATE TABLE word_overrides (
             id      TEXT PRIMARY KEY,
@@ -29,7 +28,7 @@ class AppDatabase {
           )
         ''');
 
-        // ユーザーが追加した単語を保存するテーブル（単語追加機能用）
+        // ユーザーが追加した単語を保存するテーブル
         await db.execute('''
           CREATE TABLE user_words (
             id       INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,6 +41,23 @@ class AppDatabase {
           )
         ''');
 
+        // 削除された単語のIDを記録するテーブル
+        // CSV単語は実際には消せないのでここに記録して非表示にする
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS hidden_words (
+            id TEXT PRIMARY KEY
+          )
+        ''');
+
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS hidden_words (
+              id TEXT PRIMARY KEY
+            )
+          ''');
+        }
       },
     );
   }

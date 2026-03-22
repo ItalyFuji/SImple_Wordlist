@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
-import '../utils/csv_loader.dart';
 import '../utils/done_manager.dart';
 import '../utils/word_edit_manager.dart';
+import '../utils/user_word_manager.dart';
 import '../models/word.dart';
 import 'word_detail_screen.dart';
+import 'word_add_screen.dart';
 
 // 収録単語一覧画面
 // 選択した言語の単語を全品詞・A→Z順で表示し、覚えた状態も確認できる
@@ -42,30 +43,35 @@ class _WordListScreenState extends State<WordListScreen> {
   }
 
   Future<void> _loadWords() async {
-    // 選択した言語の単語を全て読み込む（品詞フィルタなし）
-    final words = await CsvLoader.loadMultiple(widget.languages);
+    try {
+      // CSV単語＋ユーザー追加単語をまとめて取得
+      final words = await UserWordManager.loadAll(widget.languages);
 
-    // A→Z順にソート（大文字小文字を無視）
-    words.sort((a, b) => a.word.toLowerCase().compareTo(b.word.toLowerCase()));
+      // A→Z順にソート（大文字小文字を無視）
+      words.sort((a, b) => a.word.toLowerCase().compareTo(b.word.toLowerCase()));
 
-    // 全単語のdone状態を一括取得（編集前のIDで引く）
-    final doneMap = await DoneManager.getDoneMap(words);
+      // 全単語のdone状態を一括取得（編集前のIDで引く）
+      final doneMap = await DoneManager.getDoneMap(words);
 
-    // 保存済みの編集を適用（編集後も元のIDは変わらないのでdoneMapと整合する）
-    final editedWords = await WordEditManager.applyEdits(words);
+      // 保存済みの編集を適用
+      final editedWords = await WordEditManager.applyEdits(words);
 
-    setState(() {
-      _words = editedWords;
-      _doneMap = doneMap;
-      _isLoading = false;
-    });
+      setState(() {
+        _words = editedWords;
+        _doneMap = doneMap;
+        _isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('_loadWords error: $e');
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.languages.join('・')),
+        title: const Text('収録単語一覧'),
         backgroundColor: AppColors.primary,
       ),
       body: SafeArea(
@@ -187,11 +193,19 @@ class _WordListScreenState extends State<WordListScreen> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        // 単語追加ボタン（右半分・未実装）
+                        // 単語追加ボタン（右半分）
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {
-                              // TODO: 単語追加機能（未実装）
+                            onPressed: () async {
+                              final added = await Navigator.push<bool>(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => WordAddScreen(
+                                    csvLanguages: widget.languages,
+                                  ),
+                                ),
+                              );
+                              if (added == true) _loadWords();
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,

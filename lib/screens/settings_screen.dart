@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
-import '../utils/csv_loader.dart';
 import '../utils/done_manager.dart';
 import '../utils/word_edit_manager.dart';
+import '../utils/user_word_manager.dart';
 import '../models/word.dart';
 import '../models/quiz_session.dart';
 import 'flashcard_screen.dart';
@@ -51,9 +51,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   // CSVから単語を読み込み、選択した品詞でフィルタリングする
   Future<void> _loadWords() async {
-    // 複数言語のCSVをまとめて読み込み、編集内容を適用する
+    // CSV単語＋ユーザー追加単語をまとめて取得し、編集内容を適用する
     final allWords = await WordEditManager.applyEdits(
-      await CsvLoader.loadMultiple(widget.languages),
+      await UserWordManager.loadAll(widget.languages),
     );
 
     // 選択した品詞に含まれる単語だけ残す
@@ -110,11 +110,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.languages.join('・'),
-          style: const TextStyle(fontSize: 14),
-          overflow: TextOverflow.ellipsis,
-        ),
+        title: const Text('出題設定'),
         backgroundColor: AppColors.primary,
       ),
       body: SafeArea(

@@ -6,7 +6,8 @@ class Word {
   final String word;       // 単語（例: Apple）
   final String meaning;    // 意味（例: りんご）
   final String tips;       // 注釈（例: 青森県と長野県が有名）空のこともある
-  final bool done;         // 習得済みか（true=Yes / false=No）
+  final bool done;           // 習得済みか（true=Yes / false=No）
+  final bool isUserAdded;    // trueならSQLiteのuser_wordsから読んだ単語
   final String? _originalId; // 編集後も変わらない元のID（SharedPreferences検索用）
 
   const Word({
@@ -16,6 +17,7 @@ class Word {
     required this.meaning,
     required this.tips,
     this.done = false,
+    this.isUserAdded = false,
     String? originalId,
   }) : _originalId = originalId;
 
@@ -38,13 +40,14 @@ class Word {
   // originalIdを引き継ぐことでIDが変わらない
   Word copyWith({String? word, String? meaning, String? tips}) {
     return Word(
-      language: language,
-      category: category,
-      word:     word    ?? this.word,
-      meaning:  meaning ?? this.meaning,
-      tips:     tips    ?? this.tips,
-      done:     done,
-      originalId: id, // 元のIDを引き継ぐ
+      language:    language,
+      category:    category,
+      word:        word    ?? this.word,
+      meaning:     meaning ?? this.meaning,
+      tips:        tips    ?? this.tips,
+      done:        done,
+      isUserAdded: isUserAdded,
+      originalId:  id, // 元のIDを引き継ぐ
     );
   }
 }
