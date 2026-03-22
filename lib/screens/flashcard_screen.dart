@@ -31,11 +31,11 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
       ? _currentWord.word
       : _currentWord.meaning;
 
-  // 表示側のフォントサイズ（単語=60、意味=40 で固定）
-  double get _visibleFontSize => widget.session.hideTarget == 'word' ? 30 : 50;
+  // 表示側のフォントサイズ（単語=40、意味=25 で固定）
+  double get _visibleFontSize => widget.session.hideTarget == 'word' ? 25 : 40;
 
-  // 隠す側のフォントサイズ（単語=60、意味=40 で固定）
-  double get _hiddenFontSize => widget.session.hideTarget == 'word' ? 50 : 30;
+  // 隠す側のフォントサイズ（単語=40、意味=25 で固定）
+  double get _hiddenFontSize => widget.session.hideTarget == 'word' ? 40 : 25;
 
   // YES/NOボタンが押されたときの処理
   void _onAnswer(bool remembered) async {
@@ -106,6 +106,7 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
                 // padding分だけ白いカードより大きく見える = 「縁取り」効果
                 Container(
                   width: double.infinity,
+                  height: 480, // ★カードの固定高さ（Tipsの有無で変わらない）
                   padding: const EdgeInsets.all(12), // ★縁の太さ: 数字を大きくすると色付き縁が太くなる
                   decoration: BoxDecoration(
                     color: cardColor,
@@ -127,7 +128,7 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
                     ),
                     padding: const EdgeInsets.all(24.0), // ★白カード内側の余白
                     child: Column(
-                      mainAxisSize: MainAxisSize.min, // 子の高さに合わせる
+                      mainAxisSize: MainAxisSize.max, // 固定高さいっぱいに広がる
                       children: [
 
                         // 表示側テキスト（単語 or 意味）
@@ -188,9 +189,12 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
                           ),
                         ),
 
+                        // 上部コンテンツと下部（Tips+YES/NO）の間の余白
+                        // Spacerが余った高さを吸収し、Tips・YES/NOを下に固定する
+                        const Spacer(),
+
                         // 注釈（tipsが空でない場合のみ表示）
                         if (word.tips.isNotEmpty) ...[
-                          const SizedBox(height: 16), // ★隠し側と注釈の間の余白
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.all(8), // ★注釈枠の内側余白
@@ -209,7 +213,7 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
                           ),
                         ],
 
-                        const SizedBox(height: 24), // ★注釈とYES/NOの間の余白
+                        const SizedBox(height: 16), // ★Tips（あれば）とYES/NOの間の余白
 
                         // --- 覚えてた？ + YES/NOボタン ---
                         // AnimatedOpacity: 公開前は透明、公開後にフェードイン

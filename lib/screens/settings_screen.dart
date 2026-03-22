@@ -107,7 +107,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.languages.join('・')),
+        title: Text(
+          widget.languages.join('・'),
+          style: const TextStyle(fontSize: 14),
+          overflow: TextOverflow.ellipsis,
+        ),
         backgroundColor: AppColors.primary,
       ),
       body: SafeArea(

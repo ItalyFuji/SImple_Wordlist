@@ -76,7 +76,11 @@ class _CategorySelectScreenState extends State<CategorySelectScreen> {
     return Scaffold(
       appBar: AppBar(
         // 選択した言語を「・」でつないで表示（例: English・Deutsch）
-        title: Text(widget.languages.join('・')),
+        title: Text(
+          widget.languages.join('・'),
+          style: const TextStyle(fontSize: 14),
+          overflow: TextOverflow.ellipsis,
+        ),
         backgroundColor: AppColors.primary,
       ),
       body: SafeArea(

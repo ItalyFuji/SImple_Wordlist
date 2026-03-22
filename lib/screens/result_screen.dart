@@ -110,6 +110,12 @@ class ResultScreen extends StatelessWidget {
                 label: '言語選択に戻る',
                 times: 3, // リザルト → 出題設定 → 品詞選択 → 言語選択
               ),
+              const SizedBox(height: 8),
+              _buildBackButton(
+                context,
+                label: 'はじめに戻る',
+                times: 4, // リザルト → 出題設定 → 品詞選択 → 言語選択 → Home
+              ),
 
             ],
           ),
